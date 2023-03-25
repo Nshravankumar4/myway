@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Form</title>
+</head>
+<body>
+  <form id="user-form">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required><br><br>
+  
+    <label for="email">Email:</label>
+    <input type="email" id="email" required><br><br>
+  
+    <label for="phone">Phone:</label>
+    <input type="tel" id="phone" required><br><br>
+  
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('#user-form');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const name = document.querySelector('#name').value;
+      const email = document.querySelector('#email').value;
+      const phone = document.querySelector('#phone').value;
+
+      const getUserUrl = `https://test-api-v3.myways.ai/user?email=${email}`;
+
+      try {
+        // Make GET API call to check if user exists
+        const response = await fetch(getUserUrl);
+        const data = await response.json();
+
+        if (data.length > 0) {
+          alert('User Found!');
+        } else {
+          // Make POST API call to create new user
+          const postUserUrl = 'https://test-api-v3.myways.ai/user';
+          const body = JSON.stringify({ name, email, phone });
+
+          const postResponse = await fetch(postUserUrl, {
+            method: 'POST',
+            body,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (postResponse.ok) {
+            alert('User Created Successfully!');
+          } else {
+            alert('Error creating user');
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error checking or creating user');
+      }
+    });
+  </script>
+</body>
+</html>
